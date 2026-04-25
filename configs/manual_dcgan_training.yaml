@@ -1,0 +1,72 @@
+# =============================================================================
+# Manual DCGAN Baseline — Training Configuration
+# Paper: NepScript Genesis, §3.2
+#
+# Fixed hyperparameters as stated in paper:
+#   lr = 0.0002, batch_size = 64, label_smoothing (real=0.9, fake=0.1),
+#   Adam β1 = 0.5
+#
+# Architecture: G2991_D9498 (best from random NAS search)
+#   Generator:     latent=64, BatchNorm, LeakyReLU, dropout=0.2, no residual
+#   Discriminator: InstanceNorm, LeakyReLU, dropout=0.3, no residual
+# =============================================================================
+
+# ── Epochs ────────────────────────────────────────────────────────────────────
+epochs: 500            # Paper uses 500 for baseline comparison
+
+# ── Learning Rates (paper-fixed) ──────────────────────────────────────────────
+g_lr: 0.0002           # Generator LR — matches paper
+d_lr: 0.0002           # Discriminator LR — matches paper
+
+# ── Optimizer (paper-fixed) ───────────────────────────────────────────────────
+beta1: 0.5             # Adam β1 — matches paper
+
+# ── Discriminator update frequency ───────────────────────────────────────────
+d_update_freq: 2       # Update D every 2 batches (standard DCGAN)
+
+# ── Batch size (paper-fixed) ──────────────────────────────────────────────────
+batch_size: 64         # Matches paper
+
+# ── Label Smoothing (paper-fixed) ─────────────────────────────────────────────
+label_smoothing:
+  enabled: true
+  real_label: 0.9      # Paper: real = 0.9
+  fake_label: 0.1      # Paper: fake = 0.1
+
+# ── Data Configuration ────────────────────────────────────────────────────────
+data:
+  data_dir: 'data/DevanagariHandwrittenDigitDataset'
+  labels_csv: 'data/hindi_mnist.csv'
+  max_subset_per_class: null   # Full dataset for baseline
+  split: null                   # Use all data (train + test)
+  num_workers: 4
+  pin_memory: true
+  augment: true                 # Augmentation enabled (matches NAS comparison runs)
+
+# ── Output Directories ────────────────────────────────────────────────────────
+checkpoint_dir: 'experiments/manual_dcgan/checkpoints'
+image_dir: 'experiments/manual_dcgan/images'
+
+# ── Checkpoint Frequency ──────────────────────────────────────────────────────
+save_every: 50         # Full checkpoint every 50 epochs
+gen_save_every: 10     # Generator-only checkpoint every 10 epochs
+
+# ── Device ────────────────────────────────────────────────────────────────────
+device: cuda           # Change to 'mps' for Apple GPU, 'cpu' as fallback
+
+# ── Early Stopping (optional — disable to get full 500-epoch run for baseline) ─
+early_stopping:
+  enabled: false       # Keep false for clean baseline — record full 500 epochs
+  patience: 50
+  min_delta: 0.001
+  divergence_threshold: 10.0
+  mode_collapse_window: 15
+
+# ── Carbon / Energy Tracking ──────────────────────────────────────────────────
+carbon_tracking:
+  enabled: true
+  country_iso_code: 'NPL'
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+verbose: true
+log_interval: 10

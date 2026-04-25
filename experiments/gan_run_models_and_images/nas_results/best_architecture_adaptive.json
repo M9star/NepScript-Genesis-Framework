@@ -1,0 +1,19 @@
+{
+  "id": "G9913_D4729",
+  "generator": {
+    "latent_dim": 128,
+    "norm_type": "batch",
+    "activation": "relu",
+    "dropout_rate": 0.2,
+    "use_residual": true,
+    "num_classes": 10
+  },
+  "discriminator": {
+    "norm_type": "batch",
+    "activation": "leaky_relu",
+    "dropout_rate": 0.5,
+    "use_residual": true,
+    "num_classes": 10
+  },
+  "sampling_strategy": "adaptive_pure_exploration"
+}

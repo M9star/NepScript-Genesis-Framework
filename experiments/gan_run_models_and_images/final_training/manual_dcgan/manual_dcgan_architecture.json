@@ -1,0 +1,33 @@
+{
+  "id": "manual_dcgan_baseline",
+  "sampling_strategy": "manual",
+  "description": "Manual DCGAN baseline — architecture follows Radford et al. (2015) DCGAN guidelines exactly. Generator uses ReLU + BatchNorm + no dropout + no residual. Discriminator uses LeakyReLU + BatchNorm + no residual. latent_dim=100 (DCGAN standard). No data augmentation during training.",
+  "paper_reference": "Radford, A., Metz, L., & Chintala, S. (2015). Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks. arXiv:1511.06434",
+  "dcgan_guidelines_compliance": {
+    "G_uses_relu": true,
+    "G_uses_batchnorm": true,
+    "G_no_dropout": true,
+    "G_no_residual": true,
+    "G_latent_dim_100": true,
+    "D_uses_leakyrelu": true,
+    "D_uses_batchnorm": true,
+    "D_no_residual": true,
+    "no_pooling_layers": true,
+    "strided_convolutions": true
+  },
+  "generator": {
+    "latent_dim": 100,
+    "norm_type": "batch",
+    "activation": "relu",
+    "dropout_rate": 0.0,
+    "use_residual": false,
+    "num_classes": 10
+  },
+  "discriminator": {
+    "norm_type": "batch",
+    "activation": "leaky_relu",
+    "dropout_rate": 0.0,
+    "use_residual": false,
+    "num_classes": 10
+  }
+}

@@ -1,0 +1,32 @@
+# Ignore zip files in data folder
+data/*.zip
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Data - Ignore downloaded datasets
+# *.csv
+# data/fashion-mnist/
+# data/DevanagariHandwrittenDigitDataset/
+# data/hindi_mnist.csv
+# data/*.zip
+
+# VS Code
+.vscode/
+
+# Obsidian
+.obsidian/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Others
+*.log
+*.tmp

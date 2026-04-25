@@ -1,0 +1,15 @@
+{
+  "fid_score": 127.69956687343765,
+  "is_score": 1.715964913368225,
+  "is_std": 0.007571112364530563,
+  "precision": 0.96135,
+  "recall": 0.51515,
+  "threshold": 11.397462844848633,
+  "diagnosis": "LOW INCEPTION SCORE: Quality or diversity issues",
+  "model_path": "experiments/gan_run_models_and_images/final_training/progressive-phase-3/20251113_205637/models/best_generator.pth",
+  "config_path": "experiments/gan_run_models_and_images/nas_results/best_architecture_progressive.json",
+  "num_samples": 20000,
+  "split": null,
+  "strategy": "progressive-phase-3",
+  "device": "cuda"
+}

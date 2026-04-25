@@ -1,0 +1,106 @@
+{
+  "config": {
+    "strategy": "adversarial",
+    "num_architectures": 10,
+    "base_epochs": 300,
+    "d_update_freq": 2,
+    "g_lr": 0.0002,
+    "d_lr": 0.0002,
+    "beta1": 0.5,
+    "data": {
+      "data_dir": "data/DevanagariHandwrittenDigitDataset",
+      "labels_csv": "data/hindi_mnist.csv",
+      "batch_size": 64,
+      "max_subset_per_class": 1700,
+      "split": "Train",
+      "num_workers": 4
+    },
+    "device": "cuda",
+    "save_results": true,
+    "output_dir": "experiments/gan_run_models_and_images/nas_results",
+    "adaptive": {
+      "adaptation_threshold": 0.5,
+      "mutation_rate": 0.7,
+      "min_exploration": 3
+    },
+    "progressive": null,
+    "multifidelity": {
+      "quick_epochs": 5,
+      "medium_epochs": 10,
+      "full_epochs": 50,
+      "quick_threshold": 0.35,
+      "medium_threshold": 0.5
+    },
+    "adversarial": {
+      "lr_arch": 0.001,
+      "lr_weights": 0.0002,
+      "warmup_epochs": 3,
+      "temperature": 1.0,
+      "grad_clip": 5.0,
+      "arch_weight_decay": "1e-3",
+      "alternate_updates": false,
+      "snapshot_interval": 5,
+      "validation_split": 0.2
+    },
+    "final_training": {
+      "epochs": 400,
+      "g_lr": 0.0002,
+      "d_lr": 0.0002,
+      "batch_size": 64,
+      "max_subset_per_class": null,
+      "save_frequency": 50,
+      "sample_frequency": 10
+    }
+  },
+  "results": [
+    {
+      "architecture_id": "adversarial_nas_derived",
+      "config": {
+        "id": "adversarial_nas_derived",
+        "generator": {
+          "latent_dim": 100,
+          "num_classes": 10,
+          "norm_type": "batch",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.0,
+          "use_residual": true
+        },
+        "discriminator": {
+          "num_classes": 10,
+          "activation": "relu",
+          "dropout_rate": 0.2,
+          "use_residual": false,
+          "norm_type": "instance"
+        },
+        "sampling_strategy": "adversarial_nas"
+      },
+      "strategy_used": "adversarial",
+      "search_type": "gradient_based",
+      "note": "Architecture found via continuous relaxation"
+    }
+  ],
+  "best_architecture": {
+    "id": "adversarial_nas_derived",
+    "generator": {
+      "latent_dim": 100,
+      "num_classes": 10,
+      "norm_type": "batch",
+      "activation": "leaky_relu",
+      "dropout_rate": 0.0,
+      "use_residual": true
+    },
+    "discriminator": {
+      "num_classes": 10,
+      "activation": "relu",
+      "dropout_rate": 0.2,
+      "use_residual": false,
+      "norm_type": "instance"
+    },
+    "sampling_strategy": "adversarial_nas"
+  },
+  "summary": {
+    "total_architectures": 1,
+    "successful_architectures": 1,
+    "best_score": 1.0
+  }
+}

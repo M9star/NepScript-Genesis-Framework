@@ -1,0 +1,725 @@
+{
+  "config": {
+    "strategy": "random",
+    "num_architectures": 15,
+    "base_epochs": 30,
+    "d_update_freq": 2,
+    "g_lr": 0.0002,
+    "d_lr": 0.0002,
+    "beta1": 0.5,
+    "data": {
+      "data_dir": "data/DevanagariHandwrittenDigitDataset",
+      "labels_csv": "data/hindi_mnist.csv",
+      "batch_size": 64,
+      "max_subset_per_class": 2000,
+      "split": null,
+      "num_workers": 4
+    },
+    "device": "cuda",
+    "save_results": true,
+    "output_dir": "experiments/gan_run_models_and_images/nas_results",
+    "adaptive": {
+      "adaptation_threshold": 0.5,
+      "mutation_rate": 0.7,
+      "min_exploration": 3
+    },
+    "progressive": null,
+    "multifidelity": {
+      "quick_epochs": 5,
+      "medium_epochs": 10,
+      "full_epochs": 50,
+      "quick_threshold": 0.35,
+      "medium_threshold": 0.5
+    },
+    "adversarial": {
+      "lr_arch": 0.001,
+      "lr_weights": 0.0002,
+      "warmup_epochs": 3,
+      "temperature": 1.0,
+      "grad_clip": 5.0,
+      "arch_weight_decay": "1e-3",
+      "alternate_updates": false,
+      "snapshot_interval": 5,
+      "validation_split": 0.2
+    },
+    "final_training": {
+      "epochs": 400,
+      "g_lr": 0.0002,
+      "d_lr": 0.0002,
+      "batch_size": 64,
+      "max_subset_per_class": null,
+      "save_frequency": 50,
+      "sample_frequency": 10
+    }
+  },
+  "results": [
+    {
+      "architecture_id": "G2991_D9498",
+      "config": {
+        "id": "G2991_D9498",
+        "generator": {
+          "latent_dim": 64,
+          "norm_type": "batch",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.2,
+          "use_residual": false,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "instance",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.3,
+          "use_residual": false,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 155.8122501373291,
+      "model_size_mb": 4.34624,
+      "overall_score": 1.6227740757790998,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.6080456144703081,
+      "generation_quality_score": 0.8012013047933578,
+      "training_converged": true,
+      "final_g_loss": 1.681538851116412,
+      "final_d_loss": 0.8976300800570284,
+      "diversity_score": 0.7266732394695282,
+      "class_consistency": 0.6487605428321298,
+      "efficiency_score": 0.5851614400119084,
+      "nepali_score": 0.884375,
+      "enhanced_score": 0.9823494451958478,
+      "score_breakdown": {
+        "base": 1.6227740757790998,
+        "diversity": 0.7266732394695282,
+        "class_consistency": 0.6487605428321298,
+        "efficiency": 0.5851614400119084,
+        "nepali_quality": 0.884375
+      }
+    },
+    {
+      "architecture_id": "G2102_D1343",
+      "config": {
+        "id": "G2102_D1343",
+        "generator": {
+          "latent_dim": 64,
+          "norm_type": "instance",
+          "activation": "relu",
+          "dropout_rate": 0.0,
+          "use_residual": true,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "instance",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.0,
+          "use_residual": true,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 378.6880714893341,
+      "model_size_mb": 7.368576,
+      "overall_score": 1.55175967819108,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.3746448727651907,
+      "generation_quality_score": 0.7978873878717423,
+      "training_converged": true,
+      "final_g_loss": 2.4199103650193625,
+      "final_d_loss": 0.7492897455303814,
+      "diversity_score": 0.3925770938396454,
+      "class_consistency": 0.6243596854533893,
+      "efficiency_score": 0.49210044808019593,
+      "nepali_score": 0.8703124999999999,
+      "enhanced_score": 0.8732772015279603,
+      "score_breakdown": {
+        "base": 1.55175967819108,
+        "diversity": 0.3925770938396454,
+        "class_consistency": 0.6243596854533893,
+        "efficiency": 0.49210044808019593,
+        "nepali_quality": 0.8703124999999999
+      }
+    },
+    {
+      "architecture_id": "G7833_D4129",
+      "config": {
+        "id": "G7833_D4129",
+        "generator": {
+          "latent_dim": 200,
+          "norm_type": "instance",
+          "activation": "relu",
+          "dropout_rate": 0.3,
+          "use_residual": true,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "instance",
+          "activation": "relu",
+          "dropout_rate": 0.0,
+          "use_residual": true,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 401.63686442375183,
+      "model_size_mb": 9.59816,
+      "overall_score": 1.511364041707291,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.24860178974394598,
+      "generation_quality_score": 0.7892783492803573,
+      "training_converged": true,
+      "final_g_loss": 3.4590128835397786,
+      "final_d_loss": 0.497203579487892,
+      "diversity_score": 0.3353316351771355,
+      "class_consistency": 0.617660862014821,
+      "efficiency_score": 0.2928716305170549,
+      "nepali_score": 0.90625,
+      "enhanced_score": 0.8238759565281368,
+      "score_breakdown": {
+        "base": 1.511364041707291,
+        "diversity": 0.3353316351771355,
+        "class_consistency": 0.617660862014821,
+        "efficiency": 0.2928716305170549,
+        "nepali_quality": 0.90625
+      }
+    },
+    {
+      "architecture_id": "G9364_D9272",
+      "config": {
+        "id": "G9364_D9272",
+        "generator": {
+          "latent_dim": 128,
+          "norm_type": "instance",
+          "activation": "relu",
+          "dropout_rate": 0.3,
+          "use_residual": false,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "batch",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.0,
+          "use_residual": true,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 217.74655866622925,
+      "model_size_mb": 6.945536000000001,
+      "overall_score": 0.4822233427962148,
+      "stability_score": 0.5,
+      "loss_balance_score": 0.16518054750246614,
+      "generation_quality_score": 0.7755639284849167,
+      "training_converged": true,
+      "final_g_loss": 5.743004470075757,
+      "final_d_loss": 0.3303610950049322,
+      "diversity_score": 0.752587479352951,
+      "class_consistency": 0.5772304942593597,
+      "efficiency_score": 0.2972692118373794,
+      "nepali_score": 0.703125,
+      "enhanced_score": 0.5606897293369335,
+      "score_breakdown": {
+        "base": 0.4822233427962148,
+        "diversity": 0.752587479352951,
+        "class_consistency": 0.5772304942593597,
+        "efficiency": 0.2972692118373794,
+        "nepali_quality": 0.703125
+      }
+    },
+    {
+      "architecture_id": "G7114_D2783",
+      "config": {
+        "id": "G7114_D2783",
+        "generator": {
+          "latent_dim": 200,
+          "norm_type": "instance",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.3,
+          "use_residual": false,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "instance",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.3,
+          "use_residual": true,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 308.39469480514526,
+      "model_size_mb": 8.1236,
+      "overall_score": 1.4836531198096163,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.1570960879563904,
+      "generation_quality_score": 0.7884143114089965,
+      "training_converged": true,
+      "final_g_loss": 4.247114264926972,
+      "final_d_loss": 0.31419217591278087,
+      "diversity_score": 0.4425055742263794,
+      "class_consistency": 0.612110456033451,
+      "efficiency_score": 0.26802646740495917,
+      "nepali_score": 0.846875,
+      "enhanced_score": 0.8232543621055949,
+      "score_breakdown": {
+        "base": 1.4836531198096163,
+        "diversity": 0.4425055742263794,
+        "class_consistency": 0.612110456033451,
+        "efficiency": 0.26802646740495917,
+        "nepali_quality": 0.846875
+      }
+    },
+    {
+      "architecture_id": "G5346_D5788",
+      "config": {
+        "id": "G5346_D5788",
+        "generator": {
+          "latent_dim": 200,
+          "norm_type": "batch",
+          "activation": "relu",
+          "dropout_rate": 0.1,
+          "use_residual": false,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "instance",
+          "activation": "relu",
+          "dropout_rate": 0.3,
+          "use_residual": false,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 167.8378369808197,
+      "model_size_mb": 6.575824000000001,
+      "overall_score": 1.6583359899002907,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.7349236097198706,
+      "generation_quality_score": 0.7928630232810974,
+      "training_converged": true,
+      "final_g_loss": 1.4838488682771263,
+      "final_d_loss": 0.9536960877168673,
+      "diversity_score": 0.34000952541828156,
+      "class_consistency": 0.6220919709816566,
+      "efficiency_score": 0.493431422678107,
+      "nepali_score": 0.9453125,
+      "enhanced_score": 0.9057326846517908,
+      "score_breakdown": {
+        "base": 1.6583359899002907,
+        "diversity": 0.34000952541828156,
+        "class_consistency": 0.6220919709816566,
+        "efficiency": 0.493431422678107,
+        "nepali_quality": 0.9453125
+      }
+    },
+    {
+      "architecture_id": "G7884_D0497",
+      "config": {
+        "id": "G7884_D0497",
+        "generator": {
+          "latent_dim": 100,
+          "norm_type": "instance",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.3,
+          "use_residual": false,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "instance",
+          "activation": "relu",
+          "dropout_rate": 0.5,
+          "use_residual": false,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 157.21554470062256,
+      "model_size_mb": 4.935656000000001,
+      "overall_score": 1.695784908157949,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.8514244822077096,
+      "generation_quality_score": 0.8011918783187866,
+      "training_converged": true,
+      "final_g_loss": 1.1995664092298515,
+      "final_d_loss": 1.0975846263547293,
+      "diversity_score": 0.6297555506229401,
+      "class_consistency": 0.6832037972928856,
+      "efficiency_score": 0.7037280087293971,
+      "nepali_score": 0.6187499999999999,
+      "enhanced_score": 0.9696990433399594,
+      "score_breakdown": {
+        "base": 1.695784908157949,
+        "diversity": 0.6297555506229401,
+        "class_consistency": 0.6832037972928856,
+        "efficiency": 0.7037280087293971,
+        "nepali_quality": 0.6187499999999999
+      }
+    },
+    {
+      "architecture_id": "G6923_D3926",
+      "config": {
+        "id": "G6923_D3926",
+        "generator": {
+          "latent_dim": 100,
+          "norm_type": "instance",
+          "activation": "relu",
+          "dropout_rate": 0.3,
+          "use_residual": false,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "batch",
+          "activation": "relu",
+          "dropout_rate": 0.2,
+          "use_residual": false,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 140.14918303489685,
+      "model_size_mb": 4.936424000000001,
+      "overall_score": 1.5261530415604292,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.28927468306149917,
+      "generation_quality_score": 0.7979021221399307,
+      "training_converged": true,
+      "final_g_loss": 2.558631732440985,
+      "final_d_loss": 0.5785493661229983,
+      "diversity_score": 0.37682539224624634,
+      "class_consistency": 0.6294953092235746,
+      "efficiency_score": 0.41778059749327345,
+      "nepali_score": 0.971875,
+      "enhanced_score": 0.8675583923860839,
+      "score_breakdown": {
+        "base": 1.5261530415604292,
+        "diversity": 0.37682539224624634,
+        "class_consistency": 0.6294953092235746,
+        "efficiency": 0.41778059749327345,
+        "nepali_quality": 0.971875
+      }
+    },
+    {
+      "architecture_id": "G0301_D8825",
+      "config": {
+        "id": "G0301_D8825",
+        "generator": {
+          "latent_dim": 200,
+          "norm_type": "batch",
+          "activation": "relu",
+          "dropout_rate": 0.2,
+          "use_residual": false,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "instance",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.5,
+          "use_residual": false,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 166.96983003616333,
+      "model_size_mb": 6.575824000000001,
+      "overall_score": 1.6619790023327257,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.7690452286801018,
+      "generation_quality_score": 0.7708847790956497,
+      "training_converged": true,
+      "final_g_loss": 0.8467510673946466,
+      "final_d_loss": 1.308660610034443,
+      "diversity_score": 0.4594821810722351,
+      "class_consistency": 0.6629892521378147,
+      "efficiency_score": 0.5086850921686584,
+      "nepali_score": 0.7859375,
+      "enhanced_score": 0.9172813761671265,
+      "score_breakdown": {
+        "base": 1.6619790023327257,
+        "diversity": 0.4594821810722351,
+        "class_consistency": 0.6629892521378147,
+        "efficiency": 0.5086850921686584,
+        "nepali_quality": 0.7859375
+      }
+    },
+    {
+      "architecture_id": "G4412_D6514",
+      "config": {
+        "id": "G4412_D6514",
+        "generator": {
+          "latent_dim": 100,
+          "norm_type": "batch",
+          "activation": "relu",
+          "dropout_rate": 0.1,
+          "use_residual": true,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "batch",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.5,
+          "use_residual": false,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 208.1864116191864,
+      "model_size_mb": 6.4132880000000005,
+      "overall_score": 1.6306846579404686,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.652903239757489,
+      "generation_quality_score": 0.7827122867107391,
+      "training_converged": true,
+      "final_g_loss": 0.7055297396815242,
+      "final_d_loss": 1.3997232601665461,
+      "diversity_score": 1.0,
+      "class_consistency": 0.6654811923297872,
+      "efficiency_score": 0.5451256712732897,
+      "nepali_score": 0.0078125,
+      "enhanced_score": 0.9052423615390915,
+      "score_breakdown": {
+        "base": 1.6306846579404686,
+        "diversity": 1.0,
+        "class_consistency": 0.6654811923297872,
+        "efficiency": 0.5451256712732897,
+        "nepali_quality": 0.0078125
+      }
+    },
+    {
+      "architecture_id": "G8728_D3926",
+      "config": {
+        "id": "G8728_D3926",
+        "generator": {
+          "latent_dim": 200,
+          "norm_type": "instance",
+          "activation": "relu",
+          "dropout_rate": 0.2,
+          "use_residual": true,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "batch",
+          "activation": "relu",
+          "dropout_rate": 0.2,
+          "use_residual": false,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 256.4808712005615,
+      "model_size_mb": 8.050384,
+      "overall_score": 1.6594239920215865,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.7365123619096348,
+      "generation_quality_score": 0.7949009448289871,
+      "training_converged": true,
+      "final_g_loss": 0.8063304091033082,
+      "final_d_loss": 1.3333056852840388,
+      "diversity_score": 0.38524147868156433,
+      "class_consistency": 0.6209923388354214,
+      "efficiency_score": 0.4941113920656264,
+      "nepali_score": 0.94375,
+      "enhanced_score": 0.9147531699197171,
+      "score_breakdown": {
+        "base": 1.6594239920215865,
+        "diversity": 0.38524147868156433,
+        "class_consistency": 0.6209923388354214,
+        "efficiency": 0.4941113920656264,
+        "nepali_quality": 0.94375
+      }
+    },
+    {
+      "architecture_id": "G9402_D5627",
+      "config": {
+        "id": "G9402_D5627",
+        "generator": {
+          "latent_dim": 200,
+          "norm_type": "batch",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.2,
+          "use_residual": false,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "instance",
+          "activation": "relu",
+          "dropout_rate": 0.5,
+          "use_residual": true,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 297.6931200027466,
+      "model_size_mb": 8.124368,
+      "overall_score": 1.5091460914862234,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.23576691496772129,
+      "generation_quality_score": 0.7947200566530228,
+      "training_converged": true,
+      "final_g_loss": 3.1615357711292305,
+      "final_d_loss": 0.4715338299354425,
+      "diversity_score": 0.5552142858505249,
+      "class_consistency": 0.6327500312805036,
+      "efficiency_score": 0.30216795039722216,
+      "nepali_score": 0.9453125,
+      "enhanced_score": 0.877458758431656,
+      "score_breakdown": {
+        "base": 1.5091460914862234,
+        "diversity": 0.5552142858505249,
+        "class_consistency": 0.6327500312805036,
+        "efficiency": 0.30216795039722216,
+        "nepali_quality": 0.9453125
+      }
+    },
+    {
+      "architecture_id": "G1529_D1363",
+      "config": {
+        "id": "G1529_D1363",
+        "generator": {
+          "latent_dim": 200,
+          "norm_type": "batch",
+          "activation": "relu",
+          "dropout_rate": 0.3,
+          "use_residual": false,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "instance",
+          "activation": "relu",
+          "dropout_rate": 0.2,
+          "use_residual": false,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 166.72678399085999,
+      "model_size_mb": 6.575824000000001,
+      "overall_score": 1.5313801467618624,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.31008659607876604,
+      "generation_quality_score": 0.7945138931274414,
+      "training_converged": true,
+      "final_g_loss": 2.40030199384537,
+      "final_d_loss": 0.6201731921575321,
+      "diversity_score": 0.3481943130493164,
+      "class_consistency": 0.5963346655907683,
+      "efficiency_score": 0.34651444914942287,
+      "nepali_score": 0.971875,
+      "enhanced_score": 0.8460782571289891,
+      "score_breakdown": {
+        "base": 1.5313801467618624,
+        "diversity": 0.3481943130493164,
+        "class_consistency": 0.5963346655907683,
+        "efficiency": 0.34651444914942287,
+        "nepali_quality": 0.971875
+      }
+    },
+    {
+      "architecture_id": "G1208_D4584",
+      "config": {
+        "id": "G1208_D4584",
+        "generator": {
+          "latent_dim": 64,
+          "norm_type": "batch",
+          "activation": "relu",
+          "dropout_rate": 0.2,
+          "use_residual": false,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "batch",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.3,
+          "use_residual": true,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 205.73963332176208,
+      "model_size_mb": 5.897088,
+      "overall_score": 1.4988994769180142,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.2095014297049314,
+      "generation_quality_score": 0.786830160021782,
+      "training_converged": true,
+      "final_g_loss": 3.8407028788290085,
+      "final_d_loss": 0.4190028594098628,
+      "diversity_score": 1.0,
+      "class_consistency": 0.6130690977228912,
+      "efficiency_score": 0.41795672842951614,
+      "nepali_score": 0.6499999999999999,
+      "enhanced_score": 0.9324771718844099,
+      "score_breakdown": {
+        "base": 1.4988994769180142,
+        "diversity": 1.0,
+        "class_consistency": 0.6130690977228912,
+        "efficiency": 0.41795672842951614,
+        "nepali_quality": 0.6499999999999999
+      }
+    },
+    {
+      "architecture_id": "G7627_D2145",
+      "config": {
+        "id": "G7627_D2145",
+        "generator": {
+          "latent_dim": 128,
+          "norm_type": "instance",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.0,
+          "use_residual": true,
+          "num_classes": 10
+        },
+        "discriminator": {
+          "norm_type": "batch",
+          "activation": "leaky_relu",
+          "dropout_rate": 0.2,
+          "use_residual": false,
+          "num_classes": 10
+        }
+      },
+      "strategy_used": "random",
+      "training_time": 243.16408729553223,
+      "model_size_mb": 6.870016000000001,
+      "overall_score": 1.634546504133997,
+      "stability_score": 3.0,
+      "loss_balance_score": 0.6606855465771672,
+      "generation_quality_score": 0.7878028005361557,
+      "training_converged": true,
+      "final_g_loss": 0.7160423203779105,
+      "final_d_loss": 1.3946712272235762,
+      "diversity_score": 0.7331663519144058,
+      "class_consistency": 0.6378267220719704,
+      "efficiency_score": 0.5171603865320994,
+      "nepali_score": 0.9140625,
+      "enhanced_score": 0.9792459990172893,
+      "score_breakdown": {
+        "base": 1.634546504133997,
+        "diversity": 0.7331663519144058,
+        "class_consistency": 0.6378267220719704,
+        "efficiency": 0.5171603865320994,
+        "nepali_quality": 0.9140625
+      }
+    }
+  ],
+  "best_architecture": {
+    "id": "G2991_D9498",
+    "generator": {
+      "latent_dim": 64,
+      "norm_type": "batch",
+      "activation": "leaky_relu",
+      "dropout_rate": 0.2,
+      "use_residual": false,
+      "num_classes": 10
+    },
+    "discriminator": {
+      "norm_type": "instance",
+      "activation": "leaky_relu",
+      "dropout_rate": 0.3,
+      "use_residual": false,
+      "num_classes": 10
+    }
+  },
+  "summary": {
+    "total_architectures": 15,
+    "successful_architectures": 15,
+    "best_score": 0.9823494451958478
+  }
+}

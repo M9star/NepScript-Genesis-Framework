@@ -1,0 +1,19 @@
+{
+  "id": "G3773_D7351",
+  "generator": {
+    "latent_dim": 100,
+    "num_classes": 10,
+    "norm_type": "instance",
+    "activation": "relu",
+    "dropout_rate": 0.2,
+    "use_residual": false
+  },
+  "discriminator": {
+    "num_classes": 10,
+    "norm_type": "batch",
+    "activation": "relu",
+    "dropout_rate": 0.5,
+    "use_residual": false
+  },
+  "sampling_strategy": "progressive_phase_3"
+}
