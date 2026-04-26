@@ -11,7 +11,9 @@ from .utils.config import (
     validate_training_config,
     merge_configs,
     get_default_nas_config,
-    get_default_training_config
+    get_default_training_config,
+    resolve_device,
+    get_best_available_device
 )
 from .utils.data import (
     DevanagariDataset,
@@ -28,6 +30,8 @@ __all__ = [
     'merge_configs',
     'get_default_nas_config',
     'get_default_training_config',
+    'resolve_device',
+    'get_best_available_device',
     'DevanagariDataset',
     'get_default_transform',
     'stratified_subset',

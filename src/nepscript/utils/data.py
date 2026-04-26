@@ -109,7 +109,7 @@ def stratified_subset(dataset, max_per_class=None):
     return Subset(dataset, indices)
 
 
-def load_data(data_dir, labels_csv, batch_size=32, max_subset_per_class=None, split=None, num_workers=4, augment=False):
+def load_data(data_dir, labels_csv, batch_size=32, max_subset_per_class=None, split=None, num_workers=4, augment=False, device='cpu'):
     """
     Load and prepare the Devanagari digit dataset
 
@@ -149,12 +149,14 @@ def load_data(data_dir, labels_csv, batch_size=32, max_subset_per_class=None, sp
             print("Using the full dataset....")
             data_source = train_dataset
         
+        # pin_memory speeds up CUDA transfers but is NOT supported on MPS
+        use_pin_memory = (device == 'cuda') and torch.cuda.is_available()
         train_loader = DataLoader(
             data_source,
             batch_size=batch_size,
             shuffle=True,
             num_workers=num_workers,
-            pin_memory=True
+            pin_memory=use_pin_memory
         )
         dataset_size = len(data_source)
         

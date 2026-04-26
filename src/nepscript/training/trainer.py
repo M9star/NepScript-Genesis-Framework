@@ -11,12 +11,13 @@ import torch.nn as nn
 import torch.optim as optim
 from pathlib import Path
 from torchvision.utils import make_grid, save_image
+from ..utils.config import resolve_device
 
 
 class GANTrainer:
     """Trainer class for Conditional DCGAN"""
     
-    def __init__(self, generator, discriminator, config, device='cuda'):
+    def __init__(self, generator, discriminator, config, device='auto'):
         """
         Initialize GAN Trainer
         
@@ -24,12 +25,12 @@ class GANTrainer:
             generator: Generator model
             discriminator: Discriminator model
             config: Training configuration dictionary
-            device: Device to train on
+            device: Device to train on ('auto', 'cuda', 'mps', 'cpu')
         """
         self.generator = generator
         self.discriminator = discriminator
         self.config = config
-        self.device = device
+        self.device = resolve_device(device)
         
         # Training parameters
         self.lr_g = config.get('g_lr', 0.0001)
@@ -140,7 +141,6 @@ class GANTrainer:
             self.optimizerG.step()
             
             epoch_g_loss += lossG.item()
-            # epoch_d_loss += lossD.item()              #implemented inside if else block !
             num_batches += 1
         
         avg_g_loss = epoch_g_loss / num_batches
@@ -277,10 +277,10 @@ class GANTrainer:
         
         if not unified_checkpoint_path.exists():
             print(f"Unified checkpoint not found. Loading generator weights only from {p}.")
-            self.generator.load_state_dict(torch.load(p, map_location=self.device))
+            self.generator.load_state_dict(torch.load(p, map_location=self.device, weights_only=True))
             return 0 
 
-        checkpoint = torch.load(unified_checkpoint_path, map_location=self.device)
+        checkpoint = torch.load(unified_checkpoint_path, map_location=self.device, weights_only=True)
         
         self.generator.load_state_dict(checkpoint['generator_state_dict'])
         self.discriminator.load_state_dict(checkpoint['discriminator_state_dict'])

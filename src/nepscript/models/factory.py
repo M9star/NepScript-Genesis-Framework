@@ -10,6 +10,7 @@ import torch
 import torch.nn as nn
 from .generator import SearchableGenerator, GENERATOR_SEARCH_SPACE
 from .discriminator import SearchableDiscriminator, DISCRIMINATOR_SEARCH_SPACE
+from ..utils.config import resolve_device
 
 
 def weights_init(m):
@@ -62,17 +63,18 @@ def sample_architecture_pair():
     }
 
 
-def create_models_from_config(config, device='cuda'):
+def create_models_from_config(config, device='auto'):
     """
     Create generator and discriminator models from configuration
     
     Args:
         config: Configuration dictionary with 'generator' and 'discriminator' keys
-        device: Device to place models on
+        device: Device to place models on ('auto', 'cuda', 'mps', 'cpu')
         
     Returns:
         tuple: (generator, discriminator) models
     """
+    device = resolve_device(device)
     generator = SearchableGenerator(config['generator']).to(device)
     discriminator = SearchableDiscriminator(config['discriminator']).to(device)
     

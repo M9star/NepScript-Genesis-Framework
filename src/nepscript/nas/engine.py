@@ -12,24 +12,25 @@ from ..models.factory import create_models_from_config, weights_init, calculate_
 from ..training.trainer import GANTrainer
 from .evaluator import evaluate_architecture, EnsembleEvaluator
 from .strategies import AdaptiveRandomSearch, ProgressiveSearch, MultiFidelitySearch
+from ..utils.config import resolve_device
 from .adversarial_nas import AdversarialNASEngine
 
 
 class NASEngine:
     """Main NAS orchestrator"""
     
-    def __init__(self, strategy='adaptive', config=None, device='cuda'):
+    def __init__(self, strategy='adaptive', config=None, device='auto'):
         """
         Initialize NAS Engine
         
         Args:
             strategy: Search strategy ('adaptive', 'progressive', 'multifidelity', 'random', 'adversarial')
             config: Configuration dictionary
-            device: Device to run on
+            device: Device to run on ('auto', 'cuda', 'mps', 'cpu')
         """
         self.strategy_name = strategy
         self.config = config or {}
-        self.device = device
+        self.device = resolve_device(device)
         
         # Initialize search strategy
         self.searcher = self._init_strategy(strategy)
@@ -205,6 +206,8 @@ class NASEngine:
         del generator, discriminator
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
+        elif torch.backends.mps.is_available():
+            torch.mps.empty_cache()
         
         return result
     
@@ -297,7 +300,8 @@ class NASEngine:
                 split='Test',  # Use Test split for validation
                 max_subset_per_class=max_subset,
                 num_workers=data_config.get('num_workers', 0),
-                augment=False  # No augmentation for validation
+                augment=False,  # No augmentation for validation
+                device=self.device
             )
             
             if val_loader is not None:

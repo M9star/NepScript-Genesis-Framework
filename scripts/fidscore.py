@@ -116,6 +116,7 @@ def get_strategy_from_path(model_path):
 # --- 2. IMPORTS ---
 try:
     from nepscript.models.factory import create_models_from_config
+    from nepscript.utils.config import resolve_device
 except ImportError as e:
     print(f"Import Error: {e}")
     print("Make sure you're running from the project root directory")
@@ -500,7 +501,7 @@ def load_trained_generator(model_path, config_path, device):
     
     try:
         print("Loading trained weights...")
-        state_dict = torch.load(model_path, map_location=device)
+        state_dict = torch.load(model_path, map_location=device, weights_only=True)
         generator.load_state_dict(state_dict)
         print("Generator loaded successfully")
     except Exception as e:
@@ -554,7 +555,7 @@ def generate_images(generator, arch_config, num_samples, device, batch_size=100)
     return fake_images
 
 
-def load_real_images_from_directory(data_dir, num_samples):
+def load_real_images_from_directory(data_dir, num_samples, device='auto'):
     """Load real images directly from data directory structure (without CSV)."""
     print(f"\n{'='*60}")
     print(f"LOADING REAL IMAGES FROM DIRECTORY")
@@ -619,14 +620,14 @@ def load_real_images_from_directory(data_dir, num_samples):
         batch_size=100, 
         shuffle=False,
         num_workers=0,
-        pin_memory=False
+        pin_memory=(device == 'cuda')
     )
     
     print(f"Created DataLoader with {len(dataset)} images")
     return dataloader
 
 
-def load_real_images(data_dir, labels_csv, num_samples, split=None):
+def load_real_images(data_dir, labels_csv, num_samples, split=None, device='auto'):
     """Load real images from your dataset using the CSV file."""
     print(f"\n{'='*60}")
     print(f"LOADING REAL IMAGES")
@@ -659,7 +660,7 @@ def load_real_images(data_dir, labels_csv, num_samples, split=None):
         batch_size=100, 
         shuffle=True, 
         num_workers=4, 
-        pin_memory=True
+        pin_memory=(device == 'cuda')
     )
     
     print(f"Created DataLoader with {len(dataset)} real images")
@@ -1409,15 +1410,12 @@ def main():
     parser.add_argument('--labels-csv', type=str, default='data/hindi_mnist.csv', help='Path to the labels CSV for real images')
     parser.add_argument('--num-samples', type=int, default=1000, help='Number of images to use for evaluation (reduced default for faster computation)')
     parser.add_argument('--split', type=str, default=None, choices=['Train', 'Test', None], help='Which split to use for real images')
-    parser.add_argument('--device', type=str, default='auto', help='Device to use (cuda/cpu/auto)')
+    parser.add_argument('--device', type=str, default='auto', help='Device to use (auto/cuda/mps/cpu)')
     parser.add_argument('--use-directory', action='store_true', help='Load images directly from directory instead of using CSV')
     
     args = parser.parse_args()
 
-    if args.device == 'auto':
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    else:
-        device = torch.device(args.device)
+    device = resolve_device(args.device)
     
     print("="*80)
     print("COMPREHENSIVE GAN EVALUATION METRICS")
@@ -1444,10 +1442,10 @@ def main():
         # Load real images
         if args.use_directory:
             print("Using directory-based image loading...")
-            real_dataloader = load_real_images_from_directory(args.data_dir, args.num_samples)
+            real_dataloader = load_real_images_from_directory(args.data_dir, args.num_samples, device)
         else:
             print("Using CSV-based image loading...")
-            real_dataloader = load_real_images(args.data_dir, args.labels_csv, args.num_samples, args.split)
+            real_dataloader = load_real_images(args.data_dir, args.labels_csv, args.num_samples, args.split, device)
         
         if real_dataloader is None:
             return

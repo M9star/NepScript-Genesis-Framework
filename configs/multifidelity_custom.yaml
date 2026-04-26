@@ -25,7 +25,7 @@ data:
 base_epochs: 30  # Used as fallback
 
 # Device
-device: cuda
+device: auto
 
 # Output
 save_results: true

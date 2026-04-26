@@ -52,7 +52,7 @@ save_every: 50         # Full checkpoint every 50 epochs
 gen_save_every: 10     # Generator-only checkpoint every 10 epochs
 
 # ── Device ────────────────────────────────────────────────────────────────────
-device: cuda           # Change to 'mps' for Apple GPU, 'cpu' as fallback
+device: auto           # 'auto' selects best available ('mps'/'cuda'/'cpu')
 
 # ── Early Stopping (optional — disable to get full 500-epoch run for baseline) ─
 early_stopping:

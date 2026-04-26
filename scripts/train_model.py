@@ -38,7 +38,8 @@ from nepscript.training.trainer import GANTrainer
 from nepscript.utils.data import load_data
 from nepscript.utils.config import (
     load_config, validate_training_config, 
-    get_default_training_config, merge_configs
+    get_default_training_config, merge_configs,
+    resolve_device
 )
 
 
@@ -118,8 +119,9 @@ def parse_args():
     parser.add_argument(
         '--device',
         type=str,
-        choices=['cuda', 'cpu', 'mps'],
-        help='Device to use for training (mps for Mac GPU)'
+        choices=['cuda', 'cpu', 'mps', 'auto'],
+        default='auto',
+        help='Device to use for training (auto, mps, cuda, or cpu)'
     )
     parser.add_argument(
     '--max-subset-per-class',
@@ -211,7 +213,7 @@ def main():
         overrides['batch_size'] = args.batch_size
     
     
-    #type of overrides with saftey checks implemented 
+    # Apply configuration overrides with safety checks
     if args.max_subset_per_class is not None or args.split is not None:
         overrides.setdefault('data',{})
     if args.max_subset_per_class is not None:
@@ -220,7 +222,7 @@ def main():
         overrides['data']['split'] = None if args.split.lower() == 'none' else args.split 
             
     if args.no_augment or args.augment:
-        overrides.setdefault('data', {})  # Ensure the data key in the dict exists
+        overrides.setdefault('data', {})
         if args.no_augment:
             overrides['data']['augment'] = False
         elif args.augment:
@@ -246,13 +248,7 @@ def main():
         print(f" Configuration error: {e}")
         sys.exit(1)
     
-    device = config.get('device', 'cuda')
-    if device == 'cuda' and not torch.cuda.is_available():
-        print("  CUDA not available, falling back to CPU")
-        device = 'cpu'
-    elif device == 'mps' and not torch.backends.mps.is_available():
-        print("  MPS not available, falling back to CPU")
-        device = 'cpu'
+    device = resolve_device(config.get('device', 'auto'))
     
     print(f"Using device: {device}")
     
@@ -273,7 +269,8 @@ def main():
         split=split,
         max_subset_per_class=max_subset_per_class,
         num_workers=data_config.get('num_workers', 0),
-        augment=augment
+        augment=augment,
+        device=device
     )
     
     if train_loader is None:
@@ -289,20 +286,18 @@ def main():
     print(f"   Training epochs: {total_epochs}")
     
     if augment:
-        # Only show augmentation multiplier if augmentation is enabled
         total_augmented_samples = dataset_size * total_epochs
         augmented_per_class = samples_per_class * total_epochs
         print(f"      AUGMENTATION ENABLED:")
-        print(f"      • Total augmented samples over training: {total_augmented_samples:,}")
-        print(f"      • Augmented samples per class: ~{augmented_per_class:,}")
-        print(f"      • Augmentation multiplier: {total_epochs}x original dataset")
-        print(f"      • Each sample gets different random augmentation each epoch!")
+        print(f"      - Total augmented samples over training: {total_augmented_samples:,}")
+        print(f"      - Augmented samples per class: ~{augmented_per_class:,}")
+        print(f"      - Augmentation multiplier: {total_epochs}x original dataset")
+        print(f"      - Each sample gets different random augmentation each epoch!")
     else:
-        # No augmentation - same images every epoch
         print(f"       AUGMENTATION DISABLED:")
-        print(f"      • Same {dataset_size:,} images repeated each epoch")
-        print(f"      • No variation between epochs")
-        print(f"      • Total training samples: {dataset_size:,} (no multiplier)")
+        print(f"      - Same {dataset_size:,} images repeated each epoch")
+        print(f"      - No variation between epochs")
+        print(f"      - Total training samples: {dataset_size:,} (no multiplier)")
     
     
     model_id = arch_config.get('id','unnamed')

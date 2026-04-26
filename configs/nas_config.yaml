@@ -64,7 +64,7 @@ data:
 # ============================================================================
 
 # Device: 'cuda' or 'cpu'
-device: cuda
+device: auto
 
 # Save results to JSON
 save_results: True

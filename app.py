@@ -22,8 +22,8 @@ from PIL import Image
 import numpy as np
 from datetime import datetime
 import glob
-import re
 from pathlib import Path
+import re
 
 
 # Add project root to path
@@ -882,14 +882,14 @@ def generate_digits(model_path, arch_config_path, digit_class, num_samples, grid
         
         # ---------------------------------------------------#
         # DELETE OLD IMAGES for this digit_class + architecture #
-        # ---------------------------------------------------#
+        # Clear old images for this digit_class + architecture
         arch_id = None
         try:
             with open(arch_config_path, 'r') as f:
                 arch_data = json.load(f)
                 arch_id = f"{arch_data.get('id', 'unknown')}_{arch_data.get('sampling_strategy', 'random')}"
         except Exception as e:
-            print(f"   Could not extract architecture info: {e}")
+            print(f"Could not extract architecture info: {e}")
             arch_id = "unknown_arch"
 
         # Target pattern (e.g. class_0_G9596_D8925_random)
@@ -1249,7 +1249,7 @@ def run_model_evaluation(gen_model, disc_model, arch_config, use_enhanced, progr
     """Run evaluation on a trained model - FIXED VERSION."""
     
     if "No models found" in gen_model:
-        return "   xxx Please select a valid generator model!"
+        return "ERROR: Please select a valid generator model!"
     
     try:
         progress(0.2, desc="Preparing evaluation...")
@@ -1258,7 +1258,7 @@ def run_model_evaluation(gen_model, disc_model, arch_config, use_enhanced, progr
         cmd = [
             "python", "scripts/evaluate_model.py",
             "--generator", gen_model,
-            "--device", "cuda" if torch.cuda.is_available() else "cpu"
+            "--device", "auto"
         ]
         
         # Add discriminator if provided
@@ -1315,7 +1315,7 @@ def run_batch_evaluation(eval_dir, use_enhanced, progress=gr.Progress()):
             "python", "scripts/evaluate_model.py",
             "--eval-dir", eval_dir,
             "--recursive",
-            "--device", "cuda" if torch.cuda.is_available() else "cpu"
+            "--device", "auto"
         ]
         
         if use_enhanced:
@@ -1335,7 +1335,7 @@ def run_batch_evaluation(eval_dir, use_enhanced, progress=gr.Progress()):
         
         output = result.stdout
         if result.returncode != 0:
-            output += f"\n\n   xxx Batch evaluation failed!\n{result.stderr}"
+            output += f"\n\n ERROR: Task failed!\n{result.stderr}"
             return output
         
         if result.stderr:
@@ -1947,8 +1947,8 @@ def create_interface():
                 )
                 
                 with gr.Row():
-                    view_eval_btn = gr.Button("👁️ View Results", variant="primary")
-                    refresh_eval_results_btn = gr.Button("  Refresh Results", size="sm")
+                    view_eval_btn = gr.Button("View Results", variant="primary")
+                    refresh_eval_results_btn = gr.Button("Refresh Results", size="sm")
             
             eval_results_display = gr.HTML(
                 value="<div style='text-align: center; color: #666; padding: 20px;'>Select results and click 'View Results'</div>"

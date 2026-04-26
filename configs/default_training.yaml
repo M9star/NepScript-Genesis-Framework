@@ -48,7 +48,7 @@ image_dir: 'experiments/gan_run_models_and_images/final_training/images'
 
 # Device Configuration
 # Options: 'cuda', 'cpu'
-device: cuda
+device: auto
 
 # Label Smoothing (optional)
 label_smoothing:

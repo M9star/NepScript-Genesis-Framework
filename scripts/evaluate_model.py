@@ -22,6 +22,7 @@ sys.path.insert(0, str(src_root))
 
 from nepscript.models.factory import create_models_from_config, calculate_model_size
 from nepscript.nas.evaluator import evaluate_architecture, EnsembleEvaluator
+from nepscript.utils.config import resolve_device
 
 
 def parse_args():
@@ -37,7 +38,7 @@ def parse_args():
     parser.add_argument('--recursive', action='store_true', help='Recursively search for models in subdirectories')
     parser.add_argument('--checkpoint', type=str, help='Path to checkpoint file (contains both G and D)')
     parser.add_argument('--output-dir', type=str, default='experiments/evaluation', help='Directory to save evaluation results')
-    parser.add_argument('--device', type=str, choices=['cuda', 'cpu'], default='cuda', help='Device to use for evaluation')
+    parser.add_argument('--device', type=str, choices=['cuda', 'cpu', 'mps', 'auto'], default='auto', help='Device to use (auto, mps, cuda, or cpu)')
     parser.add_argument('--use-enhanced', action='store_true', default=True, help='Use enhanced ensemble evaluation (default: True)')
     
     return parser.parse_args()
@@ -214,7 +215,7 @@ def get_architecture_id_and_strategy(arch_config):
     return arch_id, sampling_strategy
 
 
-def reconstruct_training_stats(generator, discriminator, device='cuda'):
+def reconstruct_training_stats(generator, discriminator, device='auto'):
     """Reconstruct minimal training statistics needed for evaluation."""
     return {
         'stable_epochs': 10,
@@ -225,7 +226,7 @@ def reconstruct_training_stats(generator, discriminator, device='cuda'):
     }
 
 
-def evaluate_single_model(gen_path, disc_path, arch_config, device='cuda', use_enhanced=True):
+def evaluate_single_model(gen_path, disc_path, arch_config, device='auto', use_enhanced=True):
     """Evaluate a single generator-discriminator pair."""
     print(f"\n{'='*60}")
     print(f"Evaluating Model: {Path(gen_path).stem}")
@@ -241,7 +242,7 @@ def evaluate_single_model(gen_path, disc_path, arch_config, device='cuda', use_e
                     'error': 'Could not find corresponding discriminator model',
                     'generator_path': str(gen_path)
                 }
-            print(f"✓ Found discriminator: {Path(disc_path).name}")
+            print(f" Found discriminator: {Path(disc_path).name}")
         
         # Extract architecture ID and sampling strategy
         arch_id, sampling_strategy = get_architecture_id_and_strategy(arch_config)
@@ -253,8 +254,8 @@ def evaluate_single_model(gen_path, disc_path, arch_config, device='cuda', use_e
         
         # Load weights
         print(" Loading model weights...")
-        generator.load_state_dict(torch.load(gen_path, map_location=device))
-        discriminator.load_state_dict(torch.load(disc_path, map_location=device))
+        generator.load_state_dict(torch.load(gen_path, map_location=device, weights_only=True))
+        discriminator.load_state_dict(torch.load(disc_path, map_location=device, weights_only=True))
         
         generator.eval()
         discriminator.eval()
@@ -352,7 +353,7 @@ def find_model_pairs(eval_dir, recursive=False):
     return pairs
 
 
-def batch_evaluate(eval_dir, recursive=False, device='cuda', use_enhanced=True, output_dir='experiments/evaluation'):
+def batch_evaluate(eval_dir, recursive=False, device='auto', use_enhanced=True, output_dir='experiments/evaluation'):
     """Batch evaluate all models in a directory."""
     print(f"\n Searching for models in: {eval_dir}")
     print(f"   Recursive: {recursive}")
@@ -435,10 +436,7 @@ def main():
     args = parse_args()
     
     # Setup device
-    device = args.device
-    if device == 'cuda' and not torch.cuda.is_available():
-        print("  CUDA not available, falling back to CPU")
-        device = 'cpu'
+    device = resolve_device(args.device)
     
     print(f"  Using device: {device}")
     
@@ -484,7 +482,7 @@ def main():
                 print(f"  Could not find architecture config for strategy: {base_strategy}")
                 print("   Please specify --arch-config explicitly")
                 sys.exit(1)
-            print(f"✓ Found config for base strategy '{base_strategy}': {Path(config_path).name}")
+            print(f" Found config for base strategy '{base_strategy}': {Path(config_path).name}")
         else:
             config_path = args.arch_config
         
@@ -504,11 +502,10 @@ def main():
             sampling_strategy = result['model_info']['sampling_strategy']
             
             # --- NEW FILENAME LOGIC ---
-            # Append timestamp to filename if it was found in the path
             timestamp_suffix = f"_{path_info['timestamp']}" if path_info['timestamp'] else ""
             
-            # Create filename with arch ID, strategy, and optional timestamp
             model_name = path_info['model_name']
+            # Save results
             results_file = output_dir / f"eval_{model_name}_{arch_id}_{sampling_strategy}{timestamp_suffix}.json"
             
             with open(results_file, 'w') as f:

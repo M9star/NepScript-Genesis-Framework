@@ -30,9 +30,8 @@ sys.path.insert(0, str(src_root))
 try:
     from nepscript.nas.engine import NASEngine
     from nepscript.utils.data import load_data
-    from nepscript.utils.config import (
         load_config, save_config, validate_nas_config, 
-        get_default_nas_config, merge_configs
+        get_default_nas_config, merge_configs, resolve_device
     )
 except ImportError as e:
     print(f" Import Error: {e}")
@@ -93,8 +92,9 @@ def parse_args():
     parser.add_argument(
         '--device',
         type=str,
-        choices=['cuda', 'cpu'],
-        help='Device to use for training'
+        choices=['cuda', 'cpu', 'mps', 'auto'],
+        default='auto',
+        help='Device to use (auto, mps, cuda, or cpu)'
     )
     
     parser.add_argument(
@@ -164,10 +164,7 @@ def main():
         sys.exit(1)
     
     # Setup device
-    device = config.get('device', 'cuda')
-    if device == 'cuda' and not torch.cuda.is_available():
-        print("!!!  CUDA not available, falling back to CPU !!!")
-        device = 'cpu'
+    device = resolve_device(config.get('device', 'auto'))
     
     print(f"Using device: {device}")
     
@@ -185,7 +182,8 @@ def main():
         labels_csv=labels_csv,
         batch_size=batch_size,
         max_subset_per_class=max_subset,
-        split = split,
+        split=split,
+        device=device
     )
     
     if train_loader is None:

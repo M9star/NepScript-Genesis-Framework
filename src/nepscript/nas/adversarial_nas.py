@@ -18,8 +18,8 @@ import torch.nn as nn
 import torch.optim as optim
 from pathlib import Path
 import json
-
 from .supernet import DifferentiableGenerator, DifferentiableDiscriminator
+from ..utils.config import resolve_device
 
 
 class AdversarialNASEngine:
@@ -31,15 +31,9 @@ class AdversarialNASEngine:
     2. Update generator architecture (α_G) to fool discriminator on validation data
     3. Update network weights (w_G, w_D) via standard GAN training
     
-    Args:
-        latent_dim: Dimension of input noise vector
-        device: Device to run on ('cuda' or 'cpu')
-        config: Configuration dictionary with hyperparameters
-    """
-    
-    def __init__(self, latent_dim=100, device='cuda', config=None):
+    def __init__(self, latent_dim=100, device='auto', config=None):
         self.latent_dim = latent_dim
-        self.device = device
+        self.device = resolve_device(device)
         self.config = config or {}
         
         # Extract hyperparameters
@@ -206,12 +200,10 @@ class AdversarialNASEngine:
         noise = torch.randn(batch_size, self.latent_dim, device=self.device)
         fake_imgs = self.supernet_G(noise, labels)
         
-        # --- LEVEL 1: Update discriminator architecture (α_D) ---
-        # Compute discriminator validation loss
+        # Update discriminator architecture
         real_validity = self.supernet_D(real_imgs, labels)
         fake_validity = self.supernet_D(fake_imgs.detach(), labels)
         
-        # Real labels = 1, Fake labels = 0
         real_labels = torch.ones(batch_size, 1, device=self.device)
         fake_labels = torch.zeros(batch_size, 1, device=self.device)
         
@@ -219,10 +211,9 @@ class AdversarialNASEngine:
         d_loss_fake = self.criterion(fake_validity, fake_labels)
         d_loss_val = (d_loss_real + d_loss_fake) / 2
         
-        # --- LEVEL 2: Update generator architecture (α_G) ---
-        # Compute generator validation loss
+        # Update generator architecture
         fake_validity_for_g = self.supernet_D(fake_imgs, labels)
-        g_loss_val = self.criterion(fake_validity_for_g, real_labels)  # Want D to think fakes are real
+        g_loss_val = self.criterion(fake_validity_for_g, real_labels)
         
         # Combined architecture loss
         arch_loss = d_loss_val + g_loss_val

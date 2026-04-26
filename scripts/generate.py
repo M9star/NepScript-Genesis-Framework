@@ -33,6 +33,7 @@ sys.path.insert(0, str(src_root))
 
 
 from nepscript.models.factory import create_models_from_config
+from nepscript.utils.config import resolve_device
 
 
 def parse_args():
@@ -85,9 +86,9 @@ def parse_args():
     parser.add_argument(
         '--device',
         type=str,
-        choices=['cuda', 'cpu'],
-        default='cuda',
-        help='Device to use for generation'
+        choices=['cuda', 'cpu', 'mps', 'auto'],
+        default='auto',
+        help='Device to use (auto, mps, cuda, or cpu)'
     )
     
     return parser.parse_args()
@@ -167,10 +168,7 @@ def main():
     args = parse_args()
     
     # Setup device
-    device = args.device
-    if device == 'cuda' and not torch.cuda.is_available():
-        print("!!!  CUDA not available, falling back to CPU")
-        device = 'cpu'
+    device = resolve_device(args.device)
     
     print(f"Using device: {device}")
     
@@ -189,7 +187,7 @@ def main():
     
     # Load trained weights
     print(f" Loading trained weights from: {args.model}")
-    generator.load_state_dict(torch.load(args.model, map_location=device))
+    generator.load_state_dict(torch.load(args.model, map_location=device, weights_only=True))
     generator.eval()
     
     # --- CHANGE: Get model name for unique file naming ---
