@@ -59,8 +59,14 @@ def parse_args():
     parser.add_argument(
         '--arch-config',
         type=str,
-        required=True,
         help='Path to architecture configuration JSON file'
+    )
+    
+    parser.add_argument(
+        '--strategy',
+        type=str,
+        choices=['adaptive', 'progressive', 'multifidelity', 'random', 'adversarial', 'manual_dcgan'],
+        help='NAS strategy to automatically find the best architecture config'
     )
     
     parser.add_argument(
@@ -74,6 +80,7 @@ def parse_args():
         type=int,
         help='Number of training epochs'
     )
+    
     parser.add_argument(
         '--g-lr',
         type=float,
@@ -177,6 +184,47 @@ def main():
     """Main execution function"""
     args = parse_args()
     
+    # Automatic path resolution if strategy is provided
+    if args.strategy:
+        print(f"[*] Strategy '{args.strategy}' provided. Attempting to auto-resolve arch-config...")
+        nas_results_dir = Path("experiments/gan_run_models_and_images/nas_results")
+        
+        # Mapping for manual_dcgan baseline
+        search_strategy_name = args.strategy
+        if args.strategy == 'manual_dcgan':
+            print("  [i] Manual DCGAN baseline detected. Using Random Search winner as architecture.")
+            search_strategy_name = 'random'
+            # Also auto-load the manual training config if no config is provided
+            if not args.config:
+                manual_config = "configs/manual_dcgan_training.yaml"
+                if Path(manual_config).exists():
+                    args.config = manual_config
+                    print(f"  [+] Resolved training config: {args.config}")
+
+        # Check potential filenames
+        potential_configs = [
+            nas_results_dir / f"best_architecture_{search_strategy_name}.json",
+            nas_results_dir / f"best_architecture_{search_strategy_name.replace('-', '_')}.json"
+        ]
+        
+        resolved_path = None
+        for p in potential_configs:
+            if p.exists():
+                resolved_path = str(p)
+                break
+        
+        if resolved_path:
+            if not args.arch_config:
+                args.arch_config = resolved_path
+                print(f"  [+] Resolved arch-config: {args.arch_config}")
+        else:
+            print(f"Error: Could not find architecture config for strategy '{args.strategy}' in {nas_results_dir}")
+            sys.exit(1)
+
+    if not args.arch_config:
+        print("Error: The following argument is required: --arch-config (unless --strategy is used)")
+        sys.exit(1)
+
     # Load architecture configuration
     print(f"\n Loading architecture from: {args.arch_config}")
     with open(args.arch_config, 'r') as f:

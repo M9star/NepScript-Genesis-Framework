@@ -34,12 +34,74 @@ python data/extraction_script.py
 python app.py  
 ```
 
+## 📥 Using Pre-trained Models (Quick Option)
+
+### Download Pre-trained Models
+Skip the NAS search! Download pre-trained generator models:
+
+| Strategy | Download | Architecture |
+|----------|----------|--------------|
+| **Random** | [Google Drive](#) | `best_architecture_random.json` |
+| **Adaptive** | [Google Drive](#) | `best_architecture_adaptive.json` |
+| **Progressive** | [Google Drive](#) | `best_architecture_progressive.json` |
+| **Multi-Fidelity** | [Google Drive](#) | `best_architecture_multifidelity.json` |
+| **Adversarial** | [Google Drive](#) | `best_architecture_adversarial.json` |
+| **Manual DCGAN** | [Google Drive](#) | `best_architecture_manual_dcgan.json` |
+
+### Setup Downloaded Models
+```bash
+# Create models directory
+mkdir -p models/
+
+# After downloading, place files in models/ folder:
+# models/
+# ├── best_generator_random.pth
+# ├── best_architecture_random.json
+# ├── best_generator_adaptive.pth
+# ├── best_architecture_adaptive.json
+# └── ... (other models)
+```
+
+### Quick Commands to Use Downloaded Models
+
+**1️⃣ Generate Synthetic Images:**
+```bash
+python scripts/generate.py \
+  --model models/best_generator_random.pth \
+  --arch-config models/best_architecture_random.json \
+  --num-samples 100 --grid
+```
+
+**2️⃣ Calculate Model Score (FID, IS, Precision, Recall):**
+```bash
+python scripts/fidscore.py \
+  --model models/best_generator_random.pth \
+  --config models/best_architecture_random.json \
+  --num-samples 1000
+```
+
+**3️⃣ Fine-tune / Continue Training:**
+```bash
+python scripts/train_model.py \
+  --arch-config models/best_architecture_random.json \
+  --epochs 100 \
+  --resume-from models/best_generator_random.pth
+```
+
+### Alternative: Use by Strategy Name
+```bash
+# Auto-detects architecture and model by strategy name
+python scripts/fidscore.py --strategy random    # FID score
+python scripts/generate.py --strategy adaptive  # Generate images
+```
+
 ## Supported NAS Strategies
-- Random Search
-- Progressive Search
-- Adaptive Search
-- Multi-fidelity Search
-- Adversarial (Gradient-based) Search
+- ⚙️ **Random Search** - Baseline random architecture sampling
+- 🎯 **Adaptive Search** - Learns from successful architectures
+- 📊 **Progressive Search** - Phased coarse-to-fine search
+- 💰 **Multi-Fidelity Search** - Efficient 3-stage screening
+- 🔄 **Adversarial (Gradient-based)** - Direct architecture parameter optimization
+- 📐 **Manual DCGAN** - Radford et al. (2015) baseline
 
 ## GAN Evaluation Metrics
 - **Stability:** Measures training convergence

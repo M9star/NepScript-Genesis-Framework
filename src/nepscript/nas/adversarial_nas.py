@@ -30,6 +30,7 @@ class AdversarialNASEngine:
     1. Update discriminator architecture (α_D) to improve validation performance
     2. Update generator architecture (α_G) to fool discriminator on validation data
     3. Update network weights (w_G, w_D) via standard GAN training
+    """
     
     def __init__(self, latent_dim=100, device='auto', config=None):
         self.latent_dim = latent_dim

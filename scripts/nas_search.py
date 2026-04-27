@@ -30,9 +30,11 @@ sys.path.insert(0, str(src_root))
 try:
     from nepscript.nas.engine import NASEngine
     from nepscript.utils.data import load_data
+    from nepscript.utils.config import (
         load_config, save_config, validate_nas_config, 
         get_default_nas_config, merge_configs, resolve_device
     )
+    
 except ImportError as e:
     print(f" Import Error: {e}")
     print("Make sure you're running from the project root directory")
