@@ -26,9 +26,20 @@ python data/extraction_script.py
 # Open the Gradio web interface
 python app.py  
 ```
-### Download Pre-trained Models
-Skip the NAS search! Download pre-trained generator models:
-- link
+### 📥 Download Pre-trained Models
+
+Skip the NAS search! All pre-trained models are available here:
+
+**[📦 Download All Models from Google Drive](https://drive.google.com/drive/folders/1YbGtc-QbDNzC4F6L0swKh4URSQhPwa1i?usp=sharing)**
+
+The folder contains `.pth` generator files and `.json` architecture configs for:
+- Random Search
+- Adaptive Search
+- Progressive Search
+- Multi-Fidelity Search
+- Adversarial Search
+- Manual DCGAN Baseline
+
 ### Setup Downloaded Models
 ```bash
 # Create models directory
