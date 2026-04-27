@@ -3,9 +3,6 @@
 ## Project Overview
 The project focuses on generating synthetic Nepali/Devanagari handwritten digits using automatically discovered optimal GAN architectures through NAS. 
 
-The project focuses on improving Random Neural Architecture Search for GAN architecture for synthetic Nepali/Devanagari handwritten digits.
-
-
 ##  Quick Start
 
 ### 1. Environment Setup
@@ -21,10 +18,6 @@ pip install -r requirements.txt
 ### 2. Data Setup (Required if dataset is missing)
 ```bash
 # Download the dataset from Kaggle:
-# https://www.kaggle.com/datasets/anurags397/hindi-mnist-data/data
-
-# Place hindi-mnist-data.zip in the data/ folder
-# Extract the dataset:
 python data/extraction_script.py
 ```
 
@@ -33,21 +26,9 @@ python data/extraction_script.py
 # Open the Gradio web interface
 python app.py  
 ```
-
-## 📥 Using Pre-trained Models (Quick Option)
-
 ### Download Pre-trained Models
 Skip the NAS search! Download pre-trained generator models:
-
-| Strategy | Download | Architecture |
-|----------|----------|--------------|
-| **Random** | [Google Drive](#) | `best_architecture_random.json` |
-| **Adaptive** | [Google Drive](#) | `best_architecture_adaptive.json` |
-| **Progressive** | [Google Drive](#) | `best_architecture_progressive.json` |
-| **Multi-Fidelity** | [Google Drive](#) | `best_architecture_multifidelity.json` |
-| **Adversarial** | [Google Drive](#) | `best_architecture_adversarial.json` |
-| **Manual DCGAN** | [Google Drive](#) | `best_architecture_manual_dcgan.json` |
-
+- link
 ### Setup Downloaded Models
 ```bash
 # Create models directory
@@ -62,126 +43,48 @@ mkdir -p models/
 # └── ... (other models)
 ```
 
-### Quick Commands to Use Downloaded Models
-
-**1️⃣ Generate Synthetic Images:**
-```bash
-python scripts/generate.py \
-  --model models/best_generator_random.pth \
-  --arch-config models/best_architecture_random.json \
-  --num-samples 100 --grid
-```
-
-**2️⃣ Calculate Model Score (FID, IS, Precision, Recall):**
-```bash
-python scripts/fidscore.py \
-  --model models/best_generator_random.pth \
-  --config models/best_architecture_random.json \
-  --num-samples 1000
-```
-
-**3️⃣ Fine-tune / Continue Training:**
-```bash
-python scripts/train_model.py \
-  --arch-config models/best_architecture_random.json \
-  --epochs 100 \
-  --resume-from models/best_generator_random.pth
-```
-
-### Alternative: Use by Strategy Name
-```bash
-# Auto-detects architecture and model by strategy name
-python scripts/fidscore.py --strategy random    # FID score
-python scripts/generate.py --strategy adaptive  # Generate images
-```
 
 ## Supported NAS Strategies
-- ⚙️ **Random Search** - Baseline random architecture sampling
-- 🎯 **Adaptive Search** - Learns from successful architectures
-- 📊 **Progressive Search** - Phased coarse-to-fine search
-- 💰 **Multi-Fidelity Search** - Efficient 3-stage screening
-- 🔄 **Adversarial (Gradient-based)** - Direct architecture parameter optimization
-- 📐 **Manual DCGAN** - Radford et al. (2015) baseline
+-  **Random Search** - random architecture sampling
+-  **Adaptive Search** - Learns from successful architectures
+- **Progressive Search** - Phased coarse-to-fine search
+-  **Multi-Fidelity Search** - Efficient 3-stage screening
+- **Adversarial (Gradient-based)** - Direct architecture parameter optimization
 
-## GAN Evaluation Metrics
-- **Stability:** Measures training convergence
-- **Balance:** Final generator/discriminator loss proximity
-- **Quality:** Pixel intensity and variation
-- **Diversity:** Average pairwise sample distance
-- **Consistency:** Intra-class variance reliability
-- **Efficiency:** Training and model compactness
-- **Nepali Quality:** Sharpness and stroke integrity for Nepali digits
+Model tha is compare with 
+- **Manual DCGAN** - Radford et al. (2015) baseline
 
-## 🚀 Training & NAS Search
 
-NepScript Genesis provides multiple ways to discover and train optimal GAN architectures.
 
-### ⚡ Batch Training (All Algorithms)
-Use this script to run the full search and training pipeline for all supported strategies automatically:
+### Run NAS Search
 ```bash
-chmod +x scripts/run_all_experiments.sh
-./scripts/run_all_experiments.sh
+python scripts/nas_search.py --strategy adaptive --num-archs <num_arch_search> --epochs <num_epoch>
+
+for adverserial: 
+python scripts/nas_search.py --strategy adversarial --epochs <num_epoch> 
+
 ```
 
-### 🛠️ Individual Model Training
-To train an architecture found by a specific strategy, follow this two-step process:
+### Train GAN Model
+```bash
+python scripts/train_model.py --strategy <strategy_name> --epochs <num_epoch>
 
-1. **Find Architecture**: `python scripts/nas_search.py --strategy <strategy> --epochs 4`
-2. **Final Training**: `python scripts/train_model.py --arch-config <results_path>.json --epochs 400`
+```
 
-**Quick Reference Table:**
+- use manual_dcgan for baseline manual training
+- we enable augmentation while training
 
-| Algorithm | Training Command (Step 2) |
-|-----------|---------------------------|
-| **Random** | `python scripts/train_model.py --arch-config experiments/gan_run_models_and_images/nas_results/best_architecture_random.json --epochs 400` |
-| **Adaptive** | `python scripts/train_model.py --arch-config experiments/gan_run_models_and_images/nas_results/best_architecture_adaptive.json --epochs 400` |
-| **Progressive** | `python scripts/train_model.py --arch-config experiments/gan_run_models_and_images/nas_results/best_architecture_progressive.json --epochs 400` |
-| **Multi-Fidelity** | `python scripts/train_model.py --arch-config experiments/gan_run_models_and_images/nas_results/best_architecture_multifidelity.json --epochs 400` |
-| **Adversarial** | `python scripts/train_model.py --arch-config experiments/gan_run_models_and_images/nas_results/best_architecture_adversarial.json --epochs 400` |
-
-> [!TIP]
-> Hardware (CUDA/MPS/CPU) is automatically detected. No manual `--device` flag is required.
 
 ### Evaluation & Generation
 After training, evaluate your model or generate samples:
 ```bash
 # Calculate FID, IS, Precision, and Recall
-python scripts/fidscore.py --model path/to/best_generator.pth --config path/to/arch_config.json
+python scripts/evaluate_model_scores.py --strategy <strategy_name>
 
 # Generate synthetic images
 python scripts/generate.py --model path/to/best_generator.pth --arch-config path/to/arch_config.json --num-samples 100 --grid
 ```
 
-## 📖 Basic Script Usage
-
-### Run NAS Search
-```bash
-python scripts/nas_search.py --config configs/nas_config.yaml --strategy <strategy> --epochs <num_epochs>
-```
-
-### Train GAN Model
-```bash
-python scripts/train_model.py --config configs/default_training.yaml --arch-config <config_path> --epochs <num_epochs>
-```
-
-### Evaluate GAN Model
-```bash
-python scripts/fidscore.py --model <generator_path> --config <config_path> --device <device>
-```
-
-## Documentation & Guides
-- See `docs/algorithm_and_evaluation.md` for search strategy algorithms
-- See `docs/model_evaluation_metric.md` for evaluation metrics
-- See `docs/gan_evaluation_metric.md` for GAN specific metrics (FID, IS, etc.)
-- See `docs/AdversarialNAS_Implementation_Guide.md` for algorithm details
-
-## Project Structure
-- `app.py`: Gradio web interface
-- `scripts/`: Search, training, and evaluation scripts
-- `nepscript/`: Core engine and model factory
-- `configs/`: YAML configuration files
-- `data/`: Dataset management
-- `experiments/`: Results and generated samples
 
 ## ⚖️ License
 This project is part of academic research. Please cite appropriately if you use it in your work.
