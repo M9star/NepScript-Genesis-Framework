@@ -25,9 +25,31 @@ class DevanagariDataset(Dataset):
             transform: Optional transforms to apply
         """
         self.data = pd.read_csv(csv_file)
-        # self.data = self.data[self.data['filename'].str.contains(split)]
-        if split is not None: 
-            self.data = self.data[self.data['filename'].str.contains(split)]
+        if split is not None:
+            if split == 'Train':
+                mask = self.data['filename'].str.contains('Train', case=False)
+                if 'source' in self.data.columns:
+                    mask = mask | (self.data['source'] == 'synthetic')
+                self.data = self.data[mask]
+            elif split == 'Test':
+                self.data = self.data[self.data['filename'].str.contains('Test', case=False)]
+            else:
+                self.data = self.data[self.data['filename'].str.contains(split, case=False)]
+            
+
+        # if split is not None:
+        #     if split == 'Train':
+        #         # Include original Train data AND all synthetic data
+        #         # Synthetic data should be used for training, not testing
+        #         self.data = self.data[
+        #             self.data['filename'].str.contains('Train', case=False) | 
+        #             (self.data['source'] == 'synthetic')
+        #         ]
+        #     elif split == 'Test':
+        #         # Only include original Test data for clean evaluation
+        #         self.data = self.data[self.data['filename'].str.contains('Test', case=False)]
+        #     else:
+        #         self.data = self.data[self.data['filename'].str.contains(split, case=False)]
         
         self.root_dir = root_dir
         self.transform = transform
@@ -37,7 +59,22 @@ class DevanagariDataset(Dataset):
     
     def __getitem__(self, idx):
         img_rel_path = self.data.iloc[idx]['filename']
+        
+        # Handle path inconsistency in CSV (some paths include the root folder, some don't)
+        # Root dir is typically 'data/DevanagariHandwrittenDigitDataset'
+        if img_rel_path.startswith('DevanagariHandwrittenDigitDataset/'):
+            # Strip the redundant folder name if it's already in root_dir or we want it relative to 'data/'
+            if 'DevanagariHandwrittenDigitDataset' in self.root_dir:
+                img_rel_path = img_rel_path.replace('DevanagariHandwrittenDigitDataset/', '', 1)
+        
         img_path = os.path.join(self.root_dir, img_rel_path)
+        
+        # Fallback check if path doesn't exist
+        if not os.path.exists(img_path):
+            # Try relative to project root/data if root_dir join failed
+            alt_path = os.path.abspath(os.path.join(os.getcwd(), img_rel_path))
+            if os.path.exists(alt_path):
+                img_path = alt_path
         
         label = int(self.data.iloc[idx]['label'])
         
