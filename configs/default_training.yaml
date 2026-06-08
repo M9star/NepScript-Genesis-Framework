@@ -1,61 +1,32 @@
-# Default Training Configuration for Conditional DCGAN
-# Final Model Training Settings
+# Final model training (Conditional DCGAN)
 
-# Training Hyperparameters
-epochs: 400
-
-# Learning Rates
-g_lr: 0.0002  # Generator learning rate
-d_lr: 0.0002  # Discriminator learning rate (2x generator for stability)
-
-d_update_freq: 2 # update discriminator every batch (standard DCGAN)
-
-# Optimizer Settings
-beta1: 0.5    # Adam optimizer beta1
-
-
-# Data Configuration
-batch_size: 64  # Increased from 32 for faster training (if GPU has memory)
+epochs: 500
+g_lr: 0.0002
+d_lr: 0.0002
+d_update_freq: 2
+beta1: 0.5
+batch_size: 64
 
 data:
-  # Path to dataset directory
   data_dir: 'data/DevanagariHandwrittenDigitDataset'
-  
-  # Path to labels CSV file
   labels_csv: 'data/hindi_mnist.csv'
-  
-  # Use full dataset for final training (set to null or remove max_subset_per_class)
   max_subset_per_class: 2000
-  
-  # Number of data loading workers (4-8 recommended for parallel loading)
   num_workers: 4
-  
-  # Pin memory for faster GPU transfer
   pin_memory: true
+  split: null
+  augment: true
 
-  #split name/folder to use data from train, test and None to use from both
-  split : null 
-  
-  # Data augmentation for better generalization
-  augment: true  # Enable data augmentation to improve FID scores 
-
-# Checkpoint Configuration
-save_every: 50  # Save checkpoint every N epochs
-gen_save_every: 10  # Save generator every N epochs
-# Output Directories
+save_every: 50
+gen_save_every: 10
 checkpoint_dir: 'experiments/gan_run_models_and_images/final_training/models'
 image_dir: 'experiments/gan_run_models_and_images/final_training/images'
 
-# Device Configuration
-# Options: 'cuda', 'cpu'
 device: auto
 
-# Label Smoothing (optional)
 label_smoothing:
-  enabled: True 
-  real_label: 0.9   # Label for real images (instead of 1.0)
-  fake_label: 0.1   # Label for fake images (instead of 0.0)
+  enabled: True
+  real_label: 0.9
+  fake_label: 0.1
 
-# Monitoring
-verbose: true  # Print detailed training information
-log_interval: 10  # Log every N batches
+verbose: true
+log_interval: 10

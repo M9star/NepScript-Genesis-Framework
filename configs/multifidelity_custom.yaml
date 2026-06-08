@@ -1,18 +1,16 @@
-# Custom Multifidelity NAS Configuration
-# This config sets custom epoch counts for each evaluation stage
+# Multi-fidelity NAS configuration (custom epoch stages)
 
 strategy: multifidelity
 num_architectures: 15
+base_epochs: 30   # fallback
 
-# Custom multifidelity epochs
 multifidelity:
-  quick_epochs: 10      # Quick screening
-  medium_epochs: 20     # Medium evaluation
-  full_epochs: 30       # Full evaluation
-  quick_threshold: 0.5  # Score threshold to advance from quick to medium
-  medium_threshold: 0.7 # Score threshold to advance from medium to full
+  quick_epochs: 10
+  medium_epochs: 20
+  full_epochs: 30
+  quick_threshold: 0.35
+  medium_threshold: 0.60
 
-# Data configuration
 data:
   data_dir: data/DevanagariHandwrittenDigitDataset
   labels_csv: data/hindi_mnist.csv
@@ -21,12 +19,6 @@ data:
   split: Train
   num_workers: 4
 
-# Training configuration
-base_epochs: 30  # Used as fallback
-
-# Device
 device: auto
-
-# Output
 save_results: true
 output_dir: experiments/gan_run_models_and_images/nas_results

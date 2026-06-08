@@ -1,11 +1,11 @@
-# CNN Training Configuration
+# Downstream CNN classifier training (paper §3.7)
 
 training:
   epochs: 30
   batch_size: 32
   learning_rate: 0.001
-  validation_split: 0.2
-  early_stopping_patience: 10
+  validation_split: 0.1      # 10% validation
+  early_stopping_patience: 0 # no early stopping
   seed: 42
 
 data:
@@ -14,15 +14,15 @@ data:
 
 model:
   num_classes: 10
-  dropout: 0.3
+  dropout: 0.6
 
 optimization:
   optimizer: "adam"
-  scheduler: null  # optional: "cosine", "step", "exponential"
+  scheduler: null   # cosine | step | exponential
 
 device:
-  device: "auto"  # auto, cuda, mps, cpu
+  device: "auto"    # auto | cuda | mps | cpu
 
 output:
   output_dir: "experiments/cnn_models"
-  save_frequency: 1  # save every N epochs
+  save_frequency: 1

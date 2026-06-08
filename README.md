@@ -21,6 +21,17 @@ pip install -r requirements.txt
 python data/extraction_script.py
 ```
 
+> **Dataset:** Devanagari Handwritten Character Dataset (DHCD) — 20,000 digit
+> samples across 10 classes (0–9), 2,000 per class, resized to 32×32 and
+> normalized to [-1, 1]. The raw images are **not committed** to the repo.
+> After extraction, the configs expect:
+> - images under `data/DevanagariHandwrittenDigitDataset/`
+> - labels at `data/hindi_mnist.csv`
+>
+> The committed `data/hindi_mnist_with_synthetic_10k.csv` and
+> `data/synthetic_digits_10k/` are the GAN-augmented set used for the
+> downstream CNN experiments, not the base training data.
+
 ### 3. Run the Web App
 ```bash
 # Open the Gradio web interface

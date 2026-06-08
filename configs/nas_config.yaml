@@ -1,185 +1,60 @@
-# Unified NAS Configuration for Conditional DCGAN
-# Supports all search strategies: adaptive, progressive, multifidelity, random, adversarial
+# Unified NAS configuration for Conditional DCGAN
+# Strategies: adaptive | progressive | multifidelity | random | adversarial
 
-# ============================================================================
-# GENERAL SETTINGS
-# ============================================================================
-
-# Search Strategy
-# Options: 'adaptive', 'progressive', 'multifidelity', 'random', 'adversarial'
 strategy: adaptive
+num_architectures: 15   # candidates to evaluate (ignored for adversarial)
+base_epochs: 30         # epochs per sampled arch (search epochs for adversarial)
 
-# Number of architectures to evaluate during search
-# For sampling-based (adaptive/progressive/multifidelity/random): actual architectures to test
-# For gradient-based (adversarial): ignored (always finds 1 optimal architecture)
-num_architectures: 10
-
-# Base number of training epochs
-# For sampling-based: epochs to train each sampled architecture
-# For gradient-based: total search epochs (gradient descent on architecture params)
-base_epochs: 50
-
-# ============================================================================
-# GAN TRAINING SETTINGS
-# ============================================================================
-
-# Discriminator update frequency (update D every N batches)
+# GAN training
 d_update_freq: 2
-
-# Generator learning rate
 g_lr: 0.0002
-
-# Discriminator learning rate
 d_lr: 0.0002
-
-# Adam optimizer beta1
 beta1: 0.5
 
-# ============================================================================
-# DATA CONFIGURATION
-# ============================================================================
-
 data:
-  # Path to dataset directory
   data_dir: 'data/DevanagariHandwrittenDigitDataset'
-  
-  # Path to labels CSV file
   labels_csv: 'data/hindi_mnist.csv'
-  
-  # Batch size for training
   batch_size: 64
-  
-  # Maximum samples per class (for faster NAS experiments)
-  # Set to null to use full dataset
-  max_subset_per_class: 1700
-  
-  # Split configuration (optional)
+  max_subset_per_class: 1700   # null = full dataset
   split: null
-  
-  # Number of data loading workers
   num_workers: 4
 
-# ============================================================================
-# DEVICE & OUTPUT
-# ============================================================================
-
-# Device: 'cuda' or 'cpu'
 device: auto
-
-# Save results to JSON
 save_results: True
-
-# Output directory for NAS results
 output_dir: 'experiments/gan_run_models_and_images/nas_results'
 
-# ============================================================================
-# STRATEGY-SPECIFIC SETTINGS
-# ============================================================================
-
-# Adaptive Search Parameters
+# Strategy-specific settings
 adaptive:
-  # Score threshold for considering an architecture successful
-  adaptation_threshold: 0.5
-  
-  # Probability of mutating successful configs vs pure exploration
+  adaptation_threshold: 0.6
   mutation_rate: 0.7
-  
-  # Minimum number of random explorations before enabling adaptation
   min_exploration: 3
 
-# Progressive Search Parameters
 progressive:
-  # Automatically allocates search phases based on num_architectures
-  # Phase 1 (Coarse): ~40% of architectures with wider search space
-  # Phase 2 (Refined): ~60% of architectures with narrowed search space
+  # Phases auto-allocated from num_architectures (coarse -> fine)
 
-# Multi-fidelity Search Parameters
 multifidelity:
-  # Quick screening epochs (first stage)
-  quick_epochs: 5
-  
-  # Medium evaluation epochs (second stage)
-  medium_epochs: 10
-  
-  # Full evaluation epochs (final stage)
-  full_epochs: 50
-  
-  # Score threshold to advance from quick to medium stage
+  quick_epochs: 10
+  medium_epochs: 20
+  full_epochs: 30
   quick_threshold: 0.35
-  
-  # Score threshold to advance from medium to full stage
-  medium_threshold: 0.5
+  medium_threshold: 0.60
 
-# Adversarial (Gradient-based) Search Parameters
 adversarial:
-  # Learning rate for architecture parameters (α_G, α_D)
-  # These control which operations are selected (softmax weights)
   lr_arch: 0.001
-  
-  # Learning rate for network weights (w_G, w_D)
-  # These are the actual GAN weights during search
   lr_weights: 0.0002
-  
-  # Warmup epochs: train weights only before optimizing architecture
-  # Recommended: 3-5 epochs to stabilize before architecture search
   warmup_epochs: 3
-  
-  # Temperature for softmax in continuous relaxation
-  # Lower values make selection more discrete (1.0 is standard)
   temperature: 1.0
-  
-  # Gradient clipping value for stability
   grad_clip: 5.0
-  
-  # Weight decay for architecture parameters (L2 regularization)
   arch_weight_decay: 1e-3
-  
-  # Alternate architecture/weight updates (False = update both simultaneously)
   alternate_updates: False
-  
-  # Save architecture snapshots every N epochs (for analysis)
   snapshot_interval: 5
-  
-  # Validation split ratio (for architecture parameter optimization)
-  # AdversarialNAS needs separate validation set
   validation_split: 0.2
 
-# ============================================================================
-# FINAL TRAINING (Post-Search)
-# ============================================================================
-
 final_training:
-  # Epochs to train the best/derived architecture
-  epochs: 400
-  
-  # Learning rates for final training
+  epochs: 500
   g_lr: 0.0002
   d_lr: 0.0002
-  
-  # Batch size (can be larger than search phase)
   batch_size: 64
-  
-  # Use full dataset (no sampling)
   max_subset_per_class: null
-  
-  # Save frequency
   save_frequency: 50
-  
-  # Sample frequency (generate images)
   sample_frequency: 10
-
-# ============================================================================
-# USAGE EXAMPLES
-# ============================================================================
-# 
-# Run adaptive search:
-#   python scripts/nas_search.py --config configs/nas_config.yaml --strategy adaptive
-# 
-# Run adversarial search:
-#   python scripts/nas_search.py --config configs/nas_config.yaml --strategy adversarial
-#
-# Override epochs:
-#   python scripts/nas_search.py --config configs/nas_config.yaml --strategy adversarial --epochs 25
-#
-# Train best architecture:
-#   python scripts/train_model.py --arch-file experiments/.../best_architecture.json --epochs 400
