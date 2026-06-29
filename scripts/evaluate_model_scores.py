@@ -34,6 +34,12 @@ project_root = Path(__file__).resolve().parent.parent
 src_root = project_root / "src"
 sys.path.insert(0, str(src_root))
 
+from nepscript.utils.paths import (
+    require_results_dir,
+    nas_results_dir as get_nas_results_dir,
+    final_training_dir as get_final_training_dir,
+)
+
 from datetime import datetime
 
 def get_timestamp_from_path(model_path):
@@ -1413,15 +1419,21 @@ def main():
     parser.add_argument('--split', type=str, default=None, choices=['Train', 'Test', None], help='Which split to use for real images')
     parser.add_argument('--device', type=str, default='auto', help='Device to use (auto/cuda/mps/cpu)')
     parser.add_argument('--use-directory', action='store_true', help='Load images directly from directory instead of using CSV')
-    
+    parser.add_argument('--results-dir', type=str, default=None,
+                        help='Path to the downloaded NAS_Experiment_Results folder. '
+                             'Overrides the NAS_RESULTS_DIR env var and the default project-root location.')
+
     args = parser.parse_args()
 
     # Automatic path resolution if strategy is provided
     if args.strategy:
         print(f"[*] Strategy '{args.strategy}' provided. Attempting to auto-resolve paths...")
-        
+
+        results_root = require_results_dir(args.results_dir)
+        print(f"  [i] Using results bundle: {results_root}")
+
         # 1. Resolve Config Path
-        nas_results_dir = Path("experiments/gan_run_models_and_images/nas_results")
+        nas_results_dir = get_nas_results_dir(results_root)
         
         # Mapping for manual_dcgan baseline
         search_strategy_name = args.strategy
@@ -1449,10 +1461,10 @@ def main():
             print(f"  [+] Resolved config: {args.config}")
 
         # 2. Resolve Model Path (find latest timestamped run)
-        # Check both the standard NAS training root and the manual baseline root
+        # The manual_dcgan baseline lives inside the final_training bundle, so a
+        # single root covers both NAS-derived runs and the manual baseline.
         potential_training_roots = [
-            Path("experiments/gan_run_models_and_images/final_training"),
-            Path("experiments/manual_dcgan")
+            get_final_training_dir(results_root),
         ]
         
         latest_model = None

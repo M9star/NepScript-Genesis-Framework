@@ -38,3 +38,7 @@ checkpoints/
 # Experiments folder - ignore all generated outputs
 experiments/
 
+# Downloaded results bundle (hosted on Google Drive, too large for git).
+# Point the code at it via --results-dir or the NAS_RESULTS_DIR env var.
+NAS_Experiment_Results/
+

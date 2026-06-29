@@ -8,8 +8,8 @@ multifidelity:
   quick_epochs: 10
   medium_epochs: 20
   full_epochs: 30
-  quick_threshold: 0.35
-  medium_threshold: 0.60
+  quick_threshold: 0.5
+  medium_threshold: 0.7
 
 data:
   data_dir: data/DevanagariHandwrittenDigitDataset

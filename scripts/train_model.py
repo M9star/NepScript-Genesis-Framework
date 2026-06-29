@@ -37,10 +37,11 @@ from nepscript.models.factory import create_models_from_config, weights_init
 from nepscript.training.trainer import GANTrainer
 from nepscript.utils.data import load_data
 from nepscript.utils.config import (
-    load_config, validate_training_config, 
+    load_config, validate_training_config,
     get_default_training_config, merge_configs,
     resolve_device
 )
+from nepscript.utils.paths import require_results_dir, nas_results_dir as get_nas_results_dir
 
 
 
@@ -67,6 +68,14 @@ def parse_args():
         type=str,
         choices=['adaptive', 'progressive', 'multifidelity', 'random', 'adversarial', 'manual_dcgan'],
         help='NAS strategy to automatically find the best architecture config'
+    )
+
+    parser.add_argument(
+        '--results-dir',
+        type=str,
+        default=None,
+        help='Path to the downloaded NAS_Experiment_Results folder. '
+             'Overrides the NAS_RESULTS_DIR env var and the default project-root location.'
     )
     
     parser.add_argument(
@@ -187,7 +196,9 @@ def main():
     # Automatic path resolution if strategy is provided
     if args.strategy:
         print(f"[*] Strategy '{args.strategy}' provided. Attempting to auto-resolve arch-config...")
-        nas_results_dir = Path("experiments/gan_run_models_and_images/nas_results")
+        results_root = require_results_dir(args.results_dir)
+        nas_results_dir = get_nas_results_dir(results_root)
+        print(f"  [i] Using results bundle: {results_root}")
         
         # Mapping for manual_dcgan baseline
         search_strategy_name = args.strategy
